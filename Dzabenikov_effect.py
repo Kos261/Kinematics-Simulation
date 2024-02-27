@@ -43,6 +43,7 @@ def Quaternion_rot(v, q):
     return v_rot
 
 def funkcja_dq_i_dw(wektor: np.array):
+
     q = np.quaternion(wektor[0],wektor[1],wektor[2],wektor[3])
     omega = np.array([wektor[4], wektor[5], wektor[6]])
     J = np.array([[2,0,0],
@@ -61,10 +62,8 @@ def funkcja_dq_i_dw(wektor: np.array):
     wynik = np.concatenate((np.array([dq.w,dq.x,dq.y,dq.z]),dw))
     return wynik
 
-
-
 def Runge_Kutta_method(func, wektor:np.array, tn):
-    h = 0.001
+    h = 0.01
     k1 = func(wektor)
     k2 = func(wektor + h*(k1/2))
     k3 = func(wektor + h*(k2/2))
@@ -107,7 +106,7 @@ if __name__ == "__main__":
 
     u = np.array([1,0,0])
     v = np.array([0,1,0])
-    w = np.array([-1,0,0])
+    w = np.array([0,0,1])
     
     wektory_u = []
     wektory_u.append(u)
@@ -119,9 +118,9 @@ if __name__ == "__main__":
     quiver = ax.quiver(*get_vecs(0))
 
     t = 0
-    q = np.quaternion(1,2,3,4)
-    omega = np.array([0,1,0])
-    
+    q = np.quaternion(0,0,1,0)
+    omega = np.array([0.01,2,0])
+
 
     lista_omeg = []   
     lista_kwaternionów = []
@@ -129,8 +128,8 @@ if __name__ == "__main__":
     lista_kwaternionów.append(q)
 
 
-    while t < 5:
-        wektor0_do_f = np.concatenate((omega,np.array([q.w,q.x,q.y,q.z])))
+    while t < 50:
+        wektor0_do_f = np.concatenate((np.array([q.w,q.x,q.y,q.z]),omega))
         wektor_next, t = Runge_Kutta_method(funkcja_dq_i_dw, wektor0_do_f, t) 
         #print(wektor_next)
 
@@ -141,6 +140,7 @@ if __name__ == "__main__":
 
         omega = np.array([wektor_next[4], wektor_next[5], wektor_next[6]])
         #print(omega)
+        lista_omeg.append(omega)
         
         times.append(t)
         urot = Quaternion_rot(u, q)
@@ -150,13 +150,24 @@ if __name__ == "__main__":
         wrot = Quaternion_rot(w, q)
         wektory_w.append(wrot)
 
-    
+    # for i in range(10):
+    #     print(lista_omeg[i])
+
+
+    # lista_omeg_x = [item[1] for item in lista_omeg ]
+    # lista_omeg_x.pop(-1)
+    # plt.plot(times, lista_omeg_x)
+    # plt.show()
+
+
     # for i in range(len(wektory_u)):
     #     print(f"\nCHWILA {round(times[i], 3)}: {np.round(wektory_u[i], decimals=PRECISION)}\t{np.round(wektory_v[i],decimals=PRECISION)}\t{np.round(wektory_w[i], decimals=PRECISION)}")
     
     # Utworzenie animacji   
-    ani = FuncAnimation(fig, update,fargs = [ax], frames=100, interval = 1)
+    ani = FuncAnimation(fig, update,fargs = [ax], frames = 5000, interval = 10)
     plt.show()
 
 
-    
+
+
+
