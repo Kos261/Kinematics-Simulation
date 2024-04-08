@@ -7,6 +7,14 @@ WIDTH, HEIGHT = 800, 600
 window = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Gravitational slingshot effect")
 
+# PLANET_MASS = 1.898e27
+# SHIP_MASS = 333000
+# G = 6.674e-11
+# FPS = 60
+# PLANET_RADIUS = 50
+# OBJ_SIZE = 5
+# VEL_SCALE = 100
+
 PLANET_MASS = 100
 SHIP_MASS = 5
 G = 5
@@ -43,7 +51,7 @@ class Spacecraft:
 
     def move(self, planet=None):
         distance = math.sqrt((self.x - planet.x)**2 + (self.y - planet.y)**2)
-        force = (G * self.mass * planet.mass) / distance
+        force = (G * self.mass * planet.mass) / distance**2
         acceleration = force / self.mass
 
         theta = math.atan2(planet.y - self.y , planet.x - self.x)
